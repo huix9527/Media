@@ -242,6 +242,28 @@ public extension Photo {
             PHImageManager.handlePotentialDegradedResult((image, info), completion)
         }
     }
+    
+    func uiImage(targetSize: CGSize,
+                 contentMode: PHImageContentMode,
+                 progressHandler : @escaping PHAssetImageProgressHandler,
+                 _ completion: @escaping UIImageCompletion) {
+        guard let phAsset = phAsset else {
+            completion(.failure(Media.Error.noUnderlyingPHAssetFound))
+            return
+        }
+        
+        let options = PHImageRequestOptions()
+        options.isNetworkAccessAllowed = true
+        options.progressHandler = progressHandler
+        
+        Self.imageManager.requestImage(for: phAsset,
+                                       targetSize: targetSize,
+                                       contentMode: contentMode,
+                                       options: options)
+        { image, info in
+            PHImageManager.handlePotentialDegradedResult((image, info), completion)
+        }
+    }
 }
 #endif
 
